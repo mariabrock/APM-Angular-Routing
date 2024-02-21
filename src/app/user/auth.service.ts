@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import { User } from './user';
 import { MessageService } from '../messages/message.service';
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
