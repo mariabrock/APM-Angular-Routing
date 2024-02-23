@@ -1,18 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import { Product } from './product';
 import { ProductService } from './product.service';
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
-export class ProductDetailComponent {
+export class ProductDetailComponent implements OnInit {
   pageTitle = 'Product Detail';
   product: Product | null = null;
   errorMessage = '';
 
-  constructor(private productService: ProductService) { }
+  private route = inject(ActivatedRoute);
+  private productService = inject(ProductService);
+
+  constructor() { }
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.getProduct(id);
+  }
 
   getProduct(id: number): void {
     this.productService.getProduct(id).subscribe({
@@ -30,4 +39,5 @@ export class ProductDetailComponent {
       this.pageTitle = 'No product found';
     }
   }
+
 }
