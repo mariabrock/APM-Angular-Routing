@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
@@ -11,10 +11,19 @@ export class ProductEditInfoComponent implements OnInit {
   @ViewChild(NgForm) productForm?: NgForm;
 
   errorMessage = '';
-  product = { id: 1, productName: 'test', productCode: 'test', description: 'test' };
+  product: Product | null = null;
 
-  constructor(private route: ActivatedRoute) { }
+  private route = inject(ActivatedRoute);
+
+  constructor() { }
 
   ngOnInit(): void {
+    this.route.parent?.data.subscribe(data => {
+      if (this.productForm) {
+        this.productForm.reset();
+      }
+
+      this.product = data['resolvedData'].product;
+    })
   }
 }
