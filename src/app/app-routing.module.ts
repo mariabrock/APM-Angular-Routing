@@ -12,6 +12,7 @@ const ROUTES: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(ROUTES),
+    // { enableTracing: true }, can help you debug routing issues
   ],
   exports: [
     RouterModule
