@@ -27,7 +27,6 @@ export class AppComponent {
   }
 
   get isMessageDisplayed() {
-    console.log('is message displayed fired', this.messageService.isDisplayed)
     return this.messageService.isDisplayed;
   }
 
