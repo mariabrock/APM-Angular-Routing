@@ -1,12 +1,20 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  CanLoad,
+  Route,
+  Router,
+  RouterStateSnapshot,
+  UrlTree
+} from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanLoad {
 
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -17,7 +25,11 @@ export class AuthGuard implements CanActivate {
     return this.checkLoggedIn(state.url);
   }
 
-  checkLoggedIn(url: string) {
+  canLoad(route: Route) {
+    return this.checkLoggedIn(route.path);
+  }
+
+  checkLoggedIn(url: string | undefined) {
     if (this.authService.isLoggedIn) {
       return true;
     }
