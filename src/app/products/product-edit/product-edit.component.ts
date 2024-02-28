@@ -13,13 +13,33 @@ import { ActivatedRoute, Router } from "@angular/router";
 export class ProductEditComponent implements OnInit {
   pageTitle = 'Product Edit';
   errorMessage: string | undefined = '';
-  product: Product | null = null;
-  private dataIsValid: { [key: string]: boolean } = {};
+
+  private dataIsValid: { [key: string]: boolean | undefined } = {};
+
+  get isDirty(): boolean {
+    return JSON.stringify(this.originalProduct) !== JSON.stringify(this.currentProduct);
+  }
+  // for right now, a string match works because we are comparing something simple
+  // for anything more complex, we'll want to walk through all properties of both products
+  // and compare their values
+
+  private currentProduct: Product | null = null;
+  private originalProduct: Product | null = null;
 
   private productService = inject(ProductService);
   private messageService = inject(MessageService);
   private route = inject(ActivatedRoute);
   public router = inject(Router);
+
+  get product(): Product | null  {
+    return this.currentProduct;
+  }
+
+  set product(value: Product | null) {
+    this.currentProduct = value;
+    // clone the object to retain a copy
+    this.originalProduct = value ? { ...value } : null;
+  }
 
   constructor() { }
 
@@ -62,15 +82,21 @@ export class ProductEditComponent implements OnInit {
   isValid(path?: string): boolean {
     this.validate();
     if(path) {
-      return this.dataIsValid[path];
+      return <boolean>this.dataIsValid[path];
     }
     return (this.dataIsValid &&
     Object.keys(this.dataIsValid).every(d => this.dataIsValid[d] === true));
   }
 
+  reset() {
+    this.dataIsValid = {};
+    this.currentProduct = null;
+    this.originalProduct = null;
+  }
+
   saveProduct(): void {
-    if (this.isValid()) {
-      if (this.product?.id === 0) {
+    if (this.product && this.isValid()) {
+      if (this.product.id === 0) {
         this.productService.createProduct(this.product).subscribe({
           next: () => this.onSaveComplete(`The new ${this.product?.productName} was saved`),
           error: err => this.errorMessage = err
@@ -90,6 +116,7 @@ export class ProductEditComponent implements OnInit {
     if (message) {
       this.messageService.addMessage(message);
     }
+    this.reset();
 
     // Navigate back to the product list
     this.router.navigate(['/products']);

@@ -55,7 +55,7 @@ export class ProductService {
       );
   }
 
-  updateProduct(product: Product | null): Observable<Product | null> {
+  updateProduct(product: Product): Observable<Product | undefined> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const url = `${this.productsUrl}/${product?.id}`;
     return this.http.put<Product>(url, product, { headers })

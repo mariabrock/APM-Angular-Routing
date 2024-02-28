@@ -9,12 +9,15 @@ import { Router } from "@angular/router";
 })
 export class AuthService {
   currentUser?: User | undefined;
+  redirectUrl?: string;
 
   get isLoggedIn(): boolean {
     return !!this.currentUser;
   }
 
-  constructor(private messageService: MessageService) { }
+  private messageService = inject(MessageService);
+
+  constructor() { }
 
   login(userName: string, password: string): void {
     if (!userName || !password) {
